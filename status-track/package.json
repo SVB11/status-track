@@ -1,12 +1,7 @@
 {
   "name": "status-track",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
-  "main": "server.js",
   "scripts": { "start": "node server.js" },
-  "engines": { "node": ">=18" },
-  "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "express": "^4.21.2"
-  }
+  "engines": { "node": ">=18" }
 }
