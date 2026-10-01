@@ -1,38 +1,38 @@
-:root { --ink:#172033; --muted:#5d6b82; --line:#e3e8ef; --paper:#f3f5f8; --blue:#025daa; --side:#141b22; }
+:root { --ink:#172033; --muted:#5d6b82; --line:#e3e8ef; --paper:#eef1f5; --blue:#025daa; --side:#141b22; }
 * { box-sizing: border-box; }
 body { margin: 0; font: 14px/1.45 "Segoe UI", Arial, sans-serif; color: var(--ink); background: var(--paper); }
-button, input, select, textarea { font: inherit; }
+button, input, select { font: inherit; }
 button { cursor: pointer; }
-.gate { min-height: 100vh; display: grid; grid-template-columns: 460px 1fr; }
+.gate { min-height: 100vh; display: grid; grid-template-columns: 440px 1fr; }
 .brand { background: var(--side); color: #fff; padding: 36px; display: flex; flex-direction: column; justify-content: space-between; }
-.brand img.logo { width: 260px; }
-.brand img.slogan { width: 200px; margin-top: 16px; }
+.brand img.logo { width: 260px; } .brand img.slogan { width: 200px; margin-top: 16px; }
 .formwrap { display: flex; align-items: center; justify-content: center; }
 .card, .panel { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
 .card { width: min(440px, 94%); }
-.shell { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+.shell { display: grid; grid-template-columns: 230px 1fr; min-height: 100vh; }
 .nav { background: var(--side); color: #d7dee8; padding: 16px 12px; }
-.nav img { width: 180px; }
+.nav img { width: 170px; }
 .nav button { display: block; width: 100%; text-align: left; background: transparent; color: inherit; border: 0; border-radius: 8px; padding: 9px 10px; margin: 2px 0; }
 .nav button.on { background: #243140; color: #fff; }
-.top { display: flex; justify-content: space-between; padding: 12px 16px; background: #fff; border-bottom: 1px solid var(--line); }
+.top { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #fff; border-bottom: 1px solid var(--line); }
 .main { padding: 16px; }
 .panel { margin-bottom: 12px; }
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.split { display: grid; grid-template-columns: 1.1fr .9fr; gap: 12px; }
+.split { display: grid; grid-template-columns: 1.15fr .85fr; gap: 12px; }
 label { display: block; margin: 8px 0; color: var(--muted); font-size: 12px; }
-input, select, textarea { width: 100%; margin-top: 4px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; }
+input, select { width: 100%; margin-top: 4px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; }
 .btn { background: var(--blue); color: #fff; border: 0; border-radius: 8px; padding: 9px 12px; }
-.ghost { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.ghost { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; }
 table { width: 100%; border-collapse: collapse; }
 th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
-th { font-size: 11px; text-transform: uppercase; color: var(--muted); }
+th { font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
 tr.click { cursor: pointer; }
-.thumb { width: 72px; height: 52px; object-fit: cover; border-radius: 6px; }
+.thumb { width: 84px; height: 58px; object-fit: cover; border-radius: 6px; background: #edf1f5; }
+.cover { width: 100%; max-height: 220px; object-fit: cover; border-radius: 10px; }
 .chip { display: inline-block; padding: 2px 8px; border-radius: 99px; background: #e8f2fb; color: var(--blue); font-size: 12px; }
-.late { background: #fdecec; color: #9d2c2c; }
-.ok { background: #e8f6ee; color: #1f7a4d; }
-.hidden { display: none; }
-.muted { color: var(--muted); }
+.late { background: #fdecec; color: #9d2c2c; } .ok { background: #e8f6ee; color: #1f7a4d; } .hold { background: #fff6e8; color: #8a5a00; }
+.tabs { display: flex; gap: 6px; margin: 10px 0; flex-wrap: wrap; }
+.tabs button.on { background: #e8f2fb; color: var(--blue); border-color: var(--blue); }
+.hidden { display: none; } .muted { color: var(--muted); }
 h1, h2, h3 { margin: 0 0 8px; }
 @media (max-width: 900px) { .gate, .shell, .grid, .split { grid-template-columns: 1fr; } }
