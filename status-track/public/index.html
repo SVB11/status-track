@@ -1,43 +1,30 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Status Track</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
   <div id="gate" class="gate">
     <div class="brand">
-      <div>
-        <img class="logo" src="/brand/status-logo.png" alt="Status Truck Sales">
-        <img class="slogan" src="/brand/slogan.png" alt="Quality, Reliability.">
-        <p>One WS file. Quote, job card, order, cost and invoice on the same number.</p>
-      </div>
-      <div>148 Nolte Street, Bartlett · VAT 4840181335</div>
+      <img class="logo" src="/brand/status-logo.png" alt="Status Truck Sales">
+      <img class="slogan" src="/brand/slogan.png" alt="Quality, Reliability.">
+      <p>Test copy of the 1 Oct job-card restore. Not the live app.</p>
     </div>
     <div class="formwrap">
       <form id="login" class="card">
         <h1>Sign in</h1>
-        <p class="muted">Password Test1234. Not the live job-card app.</p>
         <label>Person <select id="name"></select></label>
         <label>Password <input id="password" type="password" value="Test1234"></label>
-        <button class="btn">Enter yard</button>
+        <button class="btn">Enter</button>
         <p class="muted" id="err"></p>
       </form>
     </div>
   </div>
   <div id="shell" class="shell hidden">
-    <aside class="nav">
-      <img src="/brand/status-logo.png" alt="Status">
-      <p class="muted" id="role"></p>
-      <div id="nav"></div>
-      <button id="out">Sign out</button>
-    </aside>
-    <div>
-      <div class="top"><strong id="title">Stock file</strong><span id="who"></span></div>
-      <div class="main" id="main"></div>
-    </div>
+    <aside class="nav"><img src="/brand/status-logo.png" alt=""><p class="muted" id="role"></p><div id="nav"></div><button id="out">Sign out</button></aside>
+    <div><div class="top"><strong id="title"></strong><span id="who"></span></div><div class="main" id="main"></div></div>
   </div>
   <script src="/app.js"></script>
 </body>
