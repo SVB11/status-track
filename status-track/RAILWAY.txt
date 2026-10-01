@@ -1,9 +1,8 @@
 Status Track — Railway
 
-The 500 JSON is the old app server. This zip does not use it.
+Railway runs npm run build. That script now skips Vite. The server is already packed.
 
-Start command, paste exactly:
-node --experimental-strip-types --import ./server/register.mjs server.js
-
+Start command: npm start
 Root directory empty. Delete DATABASE_URL. Do not point this at stsjobcards.co.za.
-Node 22. Password Test1234.
+Unzip first. server.js must sit next to package.json. Do not upload the zip into the repo.
+Password Test1234.
