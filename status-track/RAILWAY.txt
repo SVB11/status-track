@@ -1,11 +1,9 @@
 Status Track — Railway
 
-Delete the old files. Paste these in. package.json and package-lock.json must both be at the top.
+The 500 JSON is the old app server. This zip does not use it.
 
-The lock file was regenerated with npm install and matches package.json.
-Start command: node start.mjs
-Root directory: empty
-Delete DATABASE_URL if it is there.
-Do not point this at stsjobcards.co.za.
+Start command, paste exactly:
+node --experimental-strip-types --import ./server/register.mjs server.js
 
-Password Test1234.
+Root directory empty. Delete DATABASE_URL. Do not point this at stsjobcards.co.za.
+Node 22. Password Test1234.
