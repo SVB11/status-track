@@ -1,0 +1,21 @@
+Status Track — Railway
+
+This zip is a new project. Do not point it at stsjobcards.co.za.
+
+Why the last deploy crashed
+- The app was packed as a Vercel function. Railway needs a Node server.
+- An old start command or DATABASE_URL from the last service will crash this one.
+- Do not set a root directory. package.json is at the top of this zip.
+
+On the Railway service, delete these if they are still there
+- Start command that says node server.js
+- DATABASE_URL
+- DATABASE_PATH
+- A root directory such as status-track or public
+
+This zip already has railway.toml.
+Build command: npm run build:railway
+Start command: npm start
+
+After it is green, open the Railway domain. Password is Test1234.
+Chantelle loads a card. Fanie makes the pro-forma. Jean sees no price.
