@@ -14,112 +14,112 @@ var public_assets_data_default = {
 	"/__grok/icon-180.png": {
 		"type": "image/png",
 		"etag": "\"834-Xk8vfS0DTFn7ggtkfEduWTcNWGE\"",
-		"mtime": "2026-10-01T21:39:12.430Z",
+		"mtime": "2026-10-01T22:09:28.224Z",
 		"size": 2100,
 		"path": "../public/__grok/icon-180.png"
 	},
-	"/assets/index-BNJuDb7c.js": {
+	"/assets/index-DLmv437e.js": {
 		"type": "text/javascript; charset=utf-8",
-		"etag": "\"697b2-PZRPzERVV8AfnfOYEaWJr8YwZaM\"",
-		"mtime": "2026-10-01T21:39:11.874Z",
+		"etag": "\"697b2-MIxkFuf0iNFEXcmxnxuT6Hpi2FA\"",
+		"mtime": "2026-10-01T22:09:27.824Z",
 		"size": 432050,
-		"path": "../public/assets/index-BNJuDb7c.js"
+		"path": "../public/assets/index-DLmv437e.js"
 	},
-	"/assets/routes-C30M5uwS.js": {
+	"/assets/routes-Q5P3-16D.js": {
 		"type": "text/javascript; charset=utf-8",
-		"etag": "\"2006a-6P5cvsBefYwcHR2hY4km9QYdGEY\"",
-		"mtime": "2026-10-01T21:39:11.878Z",
-		"size": 131178,
-		"path": "../public/assets/routes-C30M5uwS.js"
+		"etag": "\"a199-NNrveHCETAjd8o1+pQ1jHYz21+s\"",
+		"mtime": "2026-10-01T22:09:27.824Z",
+		"size": 41369,
+		"path": "../public/assets/routes-Q5P3-16D.js"
 	},
-	"/assets/styles-BIhZ6n0a.css": {
+	"/assets/styles-Dr-RHixn.css": {
 		"type": "text/css; charset=utf-8",
-		"etag": "\"63e1-NlqCYg2TiheM8B9lXFdQmROGx/g\"",
-		"mtime": "2026-10-01T21:39:11.878Z",
-		"size": 25569,
-		"path": "../public/assets/styles-BIhZ6n0a.css"
+		"etag": "\"339f-7xMFZXRqVcns9GZYAVJzTWGDDag\"",
+		"mtime": "2026-10-01T22:09:27.824Z",
+		"size": 13215,
+		"path": "../public/assets/styles-Dr-RHixn.css"
 	},
 	"/brand/slogan.png": {
 		"type": "image/png",
 		"etag": "\"c23f-G6oJH4qF0VTHUXb3gDPPxfYb9O0\"",
-		"mtime": "2026-10-01T21:39:12.430Z",
+		"mtime": "2026-10-01T22:09:28.224Z",
 		"size": 49727,
 		"path": "../public/brand/slogan.png"
 	},
 	"/brand/status-logo.png": {
 		"type": "image/png",
 		"etag": "\"39a73-jTBajFmg7MUKYv6jxpUA+Y5OWrg\"",
-		"mtime": "2026-10-01T21:39:12.430Z",
+		"mtime": "2026-10-01T22:09:28.224Z",
 		"size": 236147,
 		"path": "../public/brand/status-logo.png"
-	},
-	"/brand/tanker.jpg": {
-		"type": "image/jpeg",
-		"etag": "\"2e57-1/whaDd+NLwFALfg5FqgqBDoZHk\"",
-		"mtime": "2026-10-01T21:39:12.430Z",
-		"size": 11863,
-		"path": "../public/brand/tanker.jpg"
 	},
 	"/brand/trailer.jpg": {
 		"type": "image/jpeg",
 		"etag": "\"2eeb-5MRG8RjDDUMvoTjk9Bys0/MPQY0\"",
-		"mtime": "2026-10-01T21:39:12.430Z",
+		"mtime": "2026-10-01T22:09:28.224Z",
 		"size": 12011,
 		"path": "../public/brand/trailer.jpg"
+	},
+	"/brand/tanker.jpg": {
+		"type": "image/jpeg",
+		"etag": "\"2e57-1/whaDd+NLwFALfg5FqgqBDoZHk\"",
+		"mtime": "2026-10-01T22:09:28.224Z",
+		"size": 11863,
+		"path": "../public/brand/tanker.jpg"
 	},
 	"/brand/truck.jpg": {
 		"type": "image/jpeg",
 		"etag": "\"4220-CAcCLHHg2cVzIAHuZgYHRRTJIhQ\"",
-		"mtime": "2026-10-01T21:39:12.430Z",
+		"mtime": "2026-10-01T22:09:28.224Z",
 		"size": 16928,
 		"path": "../public/brand/truck.jpg"
 	},
 	"/__grok/install/styles.css": {
 		"type": "text/css; charset=utf-8",
 		"etag": "\"1a3d-VUsWOMAheo1/P30EqU5qaIkyvIQ\"",
-		"mtime": "2026-10-01T21:39:12.430Z",
+		"mtime": "2026-10-01T22:09:28.224Z",
 		"size": 6717,
 		"path": "../public/__grok/install/styles.css"
 	},
 	"/__grok/install/assets/homescreen/glass-puzzle.svg": {
 		"type": "image/svg+xml",
 		"etag": "\"713-AP2wG8KChAGjse1Fn+f/+vDN+sQ\"",
-		"mtime": "2026-10-01T21:39:12.430Z",
+		"mtime": "2026-10-01T22:09:28.224Z",
 		"size": 1811,
 		"path": "../public/__grok/install/assets/homescreen/glass-puzzle.svg"
 	},
 	"/__grok/install/assets/homescreen/glass-share.svg": {
 		"type": "image/svg+xml",
 		"etag": "\"954-jb3ATcKjqgMOYrA/4w1v21j0Jvg\"",
-		"mtime": "2026-10-01T21:39:12.430Z",
+		"mtime": "2026-10-01T22:09:28.224Z",
 		"size": 2388,
 		"path": "../public/__grok/install/assets/homescreen/glass-share.svg"
 	},
 	"/__grok/install/assets/homescreen/logo-grok.svg": {
 		"type": "image/svg+xml",
 		"etag": "\"423-5mXO+yh9KW40jM3to5JlWPhxNK8\"",
-		"mtime": "2026-10-01T21:39:12.430Z",
+		"mtime": "2026-10-01T22:09:28.224Z",
 		"size": 1059,
 		"path": "../public/__grok/install/assets/homescreen/logo-grok.svg"
 	},
 	"/__grok/install/assets/homescreen/ob-ipad.png": {
 		"type": "image/png",
 		"etag": "\"18dd3-wlRwrpmBImStuiu+4poVz7ANin4\"",
-		"mtime": "2026-10-01T21:39:12.430Z",
+		"mtime": "2026-10-01T22:09:28.224Z",
 		"size": 101843,
 		"path": "../public/__grok/install/assets/homescreen/ob-ipad.png"
 	},
 	"/__grok/install/assets/homescreen/ob-phone.png": {
 		"type": "image/png",
 		"etag": "\"194bc-oZradWHIHO68q2glHU0Gk5ttpWA\"",
-		"mtime": "2026-10-01T21:39:12.430Z",
+		"mtime": "2026-10-01T22:09:28.224Z",
 		"size": 103612,
 		"path": "../public/__grok/install/assets/homescreen/ob-phone.png"
 	},
 	"/__grok/install/assets/homescreen/plus.svg": {
 		"type": "image/svg+xml",
 		"etag": "\"961-sSBPunx/13vbMNAlPxb7UeO3l3A\"",
-		"mtime": "2026-10-01T21:39:12.430Z",
+		"mtime": "2026-10-01T22:09:28.224Z",
 		"size": 2401,
 		"path": "../public/__grok/install/assets/homescreen/plus.svg"
 	}

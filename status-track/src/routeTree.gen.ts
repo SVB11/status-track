@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiInvoiceNoteRouteImport } from './routes/api/invoice-note'
+import { Route as ApiJobCardRouteImport } from './routes/api/job-card'
 import { Route as ApiJobLogRouteImport } from './routes/api/job-log'
 import { Route as ApiYardRouteImport } from './routes/api/yard'
 
@@ -22,6 +23,11 @@ const IndexRoute = IndexRouteImport.update({
 const ApiInvoiceNoteRoute = ApiInvoiceNoteRouteImport.update({
   id: '/api/invoice-note',
   path: '/api/invoice-note',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiJobCardRoute = ApiJobCardRouteImport.update({
+  id: '/api/job-card',
+  path: '/api/job-card',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiJobLogRoute = ApiJobLogRouteImport.update({
@@ -38,12 +44,14 @@ const ApiYardRoute = ApiYardRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/invoice-note': typeof ApiInvoiceNoteRoute
+  '/api/job-card': typeof ApiJobCardRoute
   '/api/job-log': typeof ApiJobLogRoute
   '/api/yard': typeof ApiYardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/invoice-note': typeof ApiInvoiceNoteRoute
+  '/api/job-card': typeof ApiJobCardRoute
   '/api/job-log': typeof ApiJobLogRoute
   '/api/yard': typeof ApiYardRoute
 }
@@ -51,20 +59,29 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/api/invoice-note': typeof ApiInvoiceNoteRoute
+  '/api/job-card': typeof ApiJobCardRoute
   '/api/job-log': typeof ApiJobLogRoute
   '/api/yard': typeof ApiYardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/invoice-note' | '/api/job-log' | '/api/yard'
+  fullPaths:
+    '/' | '/api/invoice-note' | '/api/job-card' | '/api/job-log' | '/api/yard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/invoice-note' | '/api/job-log' | '/api/yard'
-  id: '__root__' | '/' | '/api/invoice-note' | '/api/job-log' | '/api/yard'
+  to: '/' | '/api/invoice-note' | '/api/job-card' | '/api/job-log' | '/api/yard'
+  id:
+    | '__root__'
+    | '/'
+    | '/api/invoice-note'
+    | '/api/job-card'
+    | '/api/job-log'
+    | '/api/yard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApiInvoiceNoteRoute: typeof ApiInvoiceNoteRoute
+  ApiJobCardRoute: typeof ApiJobCardRoute
   ApiJobLogRoute: typeof ApiJobLogRoute
   ApiYardRoute: typeof ApiYardRoute
 }
@@ -83,6 +100,13 @@ declare module '@tanstack/react-router' {
       path: '/api/invoice-note'
       fullPath: '/api/invoice-note'
       preLoaderRoute: typeof ApiInvoiceNoteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/job-card': {
+      id: '/api/job-card'
+      path: '/api/job-card'
+      fullPath: '/api/job-card'
+      preLoaderRoute: typeof ApiJobCardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/job-log': {
@@ -105,6 +129,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApiInvoiceNoteRoute: ApiInvoiceNoteRoute,
+  ApiJobCardRoute: ApiJobCardRoute,
   ApiJobLogRoute: ApiJobLogRoute,
   ApiYardRoute: ApiYardRoute,
 }
