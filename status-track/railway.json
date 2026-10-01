@@ -2,7 +2,8 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "node -e \"console.log('prebuilt server, no vite build')\""
+    "nixpacksConfigPath": "nixpacks.toml",
+    "buildCommand": "echo prebuilt-server"
   },
   "deploy": {
     "startCommand": "node start.mjs",

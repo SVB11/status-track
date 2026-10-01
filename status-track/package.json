@@ -3,6 +3,8 @@
   "private": true,
   "sideEffects": false,
   "type": "module",
+  "packageManager": "npm@10.9.9",
+  "engines": { "node": ">=22" },
   "overrides": {
     "nf3": "0.3.17"
   },
