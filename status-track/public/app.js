@@ -3,8 +3,8 @@ const names = ["Chantelle","Sebastian van Biljon","Siegfried van Biljon","Fanie 
 const nav = {
   stock: ["Stock file","Open WS file","Order queue"],
   director: ["Stock file","Clear stock","Sales board"],
-  sales: ["Stock file","New quote","Sales board"],
-  workshop: ["Units","Book work"],
+  sales: ["Stock file","Submit quote","Sales board","Open Job B"],
+  workshop: ["Job cards","Book work"],
   accounts: ["Stock file","Costs","Sales board"],
   marketing: ["Photo desk"],
   admin: ["Natis","Stock file"]
@@ -35,38 +35,44 @@ function go(name) {
   [...$("nav").children].forEach((b) => b.classList.toggle("on", b.textContent === name));
   $("title").textContent = name;
   if (name === "Open WS file") return openFile();
-  if (name === "New quote") return quote();
-  if (name === "Book work" || name === "Units") return book();
+  if (name === "Submit quote") return quote();
+  if (name === "Book work" || name === "Job cards") return book();
   if (name === "Order queue") return queue();
   if (name === "Clear stock") return clearStock();
   if (name === "Sales board") return board();
   if (name === "Costs") return costs();
   if (name === "Photo desk") return photos();
   if (name === "Natis") return natis();
+  if (name === "Open Job B") return jobB();
   stock();
 }
 async function stock() {
   const rows = await api("/api/units");
-  $("main").innerHTML = `<div class="panel"><table><tr><th></th><th>Number</th><th>Unit</th><th>Tag</th><th>Step</th><th>Price excl</th></tr>
-    ${rows.map((u) => `<tr class="click" data-id="${u.id}"><td><img class="thumb" src="${u.photo}"></td><td>${u.ws}</td><td>${u.year} ${u.make} ${u.description}</td><td>${u.tag}</td><td><span class="chip ${u.cleared ? "ok" : "hold"}">${u.step}</span></td><td>${money(u.price_excl)}</td></tr>`).join("")}
+  $("main").innerHTML = `<div class="panel"><table><tr><th></th><th>Number</th><th>Unit</th><th>Step</th><th>Price excl</th></tr>
+    ${rows.map((u) => `<tr class="click" data-id="${u.id}"><td><img class="thumb" src="${u.photo}"></td><td>${u.ws}</td><td>${u.year} ${u.make} ${u.description}</td><td><span class="chip ${u.cleared ? "ok" : "hold"}">${u.step}</span></td><td>${money(u.price_excl)}</td></tr>`).join("")}
   </table></div><div id="file"></div>`;
   $("main").querySelectorAll("tr.click").forEach((tr) => tr.onclick = () => file(tr.dataset.id, "File"));
 }
 async function file(id, tab) {
   const pack = await api("/api/units/" + id);
   const u = pack.unit;
-  const tabs = ["File","Job A","Orders","Log"].concat(me.price ? ["Quote"] : []).concat(me.cost ? ["Costs"] : []);
+  const tabs = ["File","Job card","Orders","Log"].concat(me.price ? ["Quote"] : []).concat(me.cost ? ["Costs"] : []);
+  const jobs = (pack.jobs || []).map((j) => `<p>Job ${j.kind} · ${j.title} · ${j.status}</p>`).join("");
+  const tasks = pack.tasks.map((t) => `<p>Job ${t.job} · ${t.name} <span class="chip ${t.done ? "ok" : ""}">${t.done ? "Done" : "Open"}</span> ${["workshop","director","stock"].includes(me.role) ? `<button class="ghost" data-task="${t.id}">Toggle</button>` : ""}</p>`).join("");
+  const booked = pack.bookings.map((b) => `<p>${b.person} · ${b.qty} × ${b.item}</p>`).join("") || "<p class='muted'>No booking.</p>";
   const body = {
-    File: `<img class="cover" src="${u.photo}"><h2>${u.ws}</h2><p>${u.year} ${u.make} ${u.model} · ${u.description}</p><p>${u.sentence || "Sentence hidden"}</p><p class="muted">${u.vin || "VIN hidden"} · ${u.reg || "No reg"} · ${u.seller || ""}</p><p>${me.price ? money(u.price_excl) + " excl" : "Price hidden"}</p>`,
-    "Job A": pack.tasks.map((t) => `<p>${t.name} <span class="chip ${t.done ? "ok" : ""}">${t.done ? "Done" : "Open"}</span> ${["workshop","director","stock"].includes(me.role) ? `<button class="ghost" data-task="${t.id}">Toggle</button>` : ""}</p>`).join("") + `<h3>Booked</h3>` + (pack.bookings.map((b) => `<p>${b.person} · ${b.qty} × ${b.item}</p>`).join("") || "<p class='muted'>No booking.</p>"),
-    Quote: pack.quotes.map((q) => `<p><b>${q.number}</b> · ${q.customer} · ${q.code} · ${money(q.total)} · day ${q.follow_day} due ${q.due_on}</p>`).join("") || "<p class='muted'>No quote on this number.</p>",
-    Orders: pack.orders.map((o) => `<p>${o.order_no} · ${o.responsible} · ${o.supplier} · ${o.qty} × ${o.item} · ${o.invoiced_excl == null ? "Hidden" : money(o.invoiced_excl)}</p>`).join("") || "<p class='muted'>No order number yet.</p>",
-    Costs: `<p>Qty 0 is skipped.</p>` + (pack.costs || []).filter((c) => c.qty > 0).map((c) => `<p>${c.supplier} · ${c.qty} × ${c.name} · ${money(c.qty * c.unit_price)}</p>`).join("") ,
-    Log: pack.logs.map((l) => `<p>${l.person} · ${l.line} · ${String(l.created_at).slice(0, 16).replace("T"," ")}</p>`).join("") || "<p class='muted'>No log.</p>"
+    File: `<img class="cover" src="${u.photo}"><h2>${u.ws}</h2><p>${u.year} ${u.make} ${u.model} · ${u.description}</p><p>${u.sentence || "Sentence hidden"}</p><p class="muted">${u.vin || "VIN hidden"} · ${u.reg || "No reg"} · ${u.seller || ""}</p><p>${me.price ? money(u.price_excl) + " excl" : "Price hidden"}</p>${jobs}<button class="ghost no-print" id="print">Print file</button>`,
+    "Job card": jobs + tasks + "<h3>Work booked</h3>" + booked + `<button class="ghost no-print" id="print">Print job card</button>`,
+    Quote: pack.quotes.map((q) => `<div class="paper"><b>${q.number}</b> · ${q.customer}<br>${q.item}<br>Excl ${money(q.excl)} · VAT ${money(q.vat)} · Total ${money(q.total)}<br>System due ${q.due_on}</div>`).join("") || "<p class='muted'>No quote.</p>",
+    Orders: pack.orders.map((o) => `<p>${o.order_no} · ${o.responsible} · ${o.supplier} · ${o.qty} × ${o.item} · ${o.invoiced_excl == null ? "Hidden" : money(o.invoiced_excl)}</p>`).join("") || "<p class='muted'>No order number.</p>",
+    Costs: (pack.costs || []).filter((c) => c.qty > 0).map((c) => `<p>${c.supplier} · ${c.qty} × ${c.name} · ${money(c.qty * c.unit_price)}</p>`).join("") || "<p class='muted'>Qty 0 skipped. No cost yet.</p>",
+    Log: pack.logs.map((l) => `<p>${l.person} · ${l.line}</p>`).join("") || "<p class='muted'>No log.</p>"
   }[tab] || "";
-  $("file").innerHTML = `<div class="panel"><div class="tabs">${tabs.map((t) => `<button class="ghost ${t === tab ? "on" : ""}" data-tab="${t}">${t}</button>`).join("")}</div>${body}</div>`;
+  $("file").innerHTML = `<div class="panel"><div class="tabs no-print">${tabs.map((t) => `<button class="ghost ${t === tab ? "on" : ""}" data-tab="${t}">${t}</button>`).join("")}</div>${body}</div>`;
   $("file").querySelectorAll("button[data-tab]").forEach((b) => b.onclick = () => file(id, b.dataset.tab));
-  $("file").querySelectorAll("button[data-task]").forEach((b) => b.onclick = async () => { await api("/api/tasks/" + b.dataset.task, { method: "POST", body: "{}" }); file(id, "Job A"); });
+  $("file").querySelectorAll("button[data-task]").forEach((b) => b.onclick = async () => { await api("/api/tasks/" + b.dataset.task, { method: "POST", body: "{}" }); file(id, "Job card"); });
+  const print = $("file").querySelector("#print");
+  if (print) print.onclick = () => window.print();
 }
 function openFile() {
   $("main").innerHTML = `<div class="panel"><h2>Open a purchased unit</h2><div class="grid">
@@ -81,9 +87,10 @@ function openFile() {
     <label>Tag <select id="tag"><option>TANKER</option><option>TRUCK TRACTOR</option><option>TRAILER</option><option>RIGID</option><option>TIPPER TRUCK</option></select></label>
   </div><label>Quote sentence <input id="sentence"></label>
   <button class="btn" id="draft" type="button">Draft sentence</button>
-  <button class="btn" id="create">Open file</button></div><div id="file"></div>`;
+  <button class="btn" id="create">Open file</button>
+  <p class="muted">Job A opens with the file. Job B opens after a sale.</p></div><div id="file"></div>`;
   $("draft").onclick = async () => { const out = await api("/api/draft/sentence", { method: "POST", body: JSON.stringify({ year: $("year").value, make: $("make").value, description: $("desc").value }) }); $("sentence").value = out.draft; };
-  $("create").onclick = async () => { const out = await api("/api/units", { method: "POST", body: JSON.stringify({ kind: $("kind").value, seller: $("seller").value, year: $("year").value, make: $("make").value, model: $("model").value, description: $("desc").value, vin: $("vin").value, price_excl: Number($("price").value), tag: $("tag").value, sentence: $("sentence").value }) }); alert(out.ws + " opened. A director must clear it."); go("Stock file"); };
+  $("create").onclick = async () => { const out = await api("/api/units", { method: "POST", body: JSON.stringify({ kind: $("kind").value, seller: $("seller").value, year: $("year").value, make: $("make").value, model: $("model").value, description: $("desc").value, vin: $("vin").value, price_excl: Number($("price").value), tag: $("tag").value, sentence: $("sentence").value }) }); alert(out.ws + " opened with Job A."); go("Stock file"); };
 }
 async function clearStock() {
   const rows = (await api("/api/units")).filter((u) => !u.cleared);
@@ -92,26 +99,38 @@ async function clearStock() {
 }
 async function quote() {
   const rows = (await api("/api/units")).filter((u) => u.cleared);
-  $("main").innerHTML = `<div class="split"><div class="panel"><h2>New quote</h2><p class="muted">The system sets day 1. You do not pick the date.</p>
+  $("main").innerHTML = `<div class="split"><div class="panel"><h2>Submit quote</h2><p class="muted">The system sets day 1. You do not pick the date.</p>
     <label>Customer <input id="customer"></label>
+    <label>Phone <input id="phone"></label>
     <label>Cleared unit <select id="unit">${rows.map((u) => `<option value="${u.id}">${u.ws} · ${u.description}</option>`).join("")}</select></label>
     <label>Trade-in excl <input id="trade" type="number" value="0"></label>
-    <button class="btn" id="make">Generate pro-forma</button></div><div class="panel" id="paper"><p class="muted">Pro-forma prints here.</p></div></div>`;
+    <button class="btn" id="make">Submit pro-forma</button></div>
+    <div class="panel paper" id="paper"><p class="muted">Pro-forma prints here.</p></div></div>`;
   $("make").onclick = async () => {
-    const q = await api("/api/quotes", { method: "POST", body: JSON.stringify({ unit_id: $("unit").value, customer: $("customer").value, trade_in: Number($("trade").value) }) });
-    $("paper").innerHTML = `<b>STATUS TRUCK SALES</b><p>Pro-forma ${q.number}<br>${q.customer}<br>${q.item}<br>Admin fee R 2 500 · trade-in ${money(q.trade_in)}<br>Excl ${money(q.excl)} · VAT ${money(q.vat)}<br><b>Total ${money(q.total)}</b><br>System due ${q.due_on}</p>`;
+    const q = await api("/api/quotes", { method: "POST", body: JSON.stringify({ unit_id: $("unit").value, customer: $("customer").value, phone: $("phone").value, trade_in: Number($("trade").value) }) });
+    $("paper").innerHTML = `<b>STATUS TRUCK SALES</b><p>Pro-forma ${q.number}<br>${q.customer}<br>${q.item}<br>${q.sentence}<br>Admin fee R 2 500 · trade-in ${money(q.trade_in)}<br>Excl ${money(q.excl)} · VAT ${money(q.vat)}<br><b>Total ${money(q.total)}</b><br>System due ${q.due_on}</p><button class="ghost no-print" onclick="window.print()">Print</button>`;
   };
+}
+async function jobB() {
+  const rows = (await api("/api/units")).filter((u) => u.cleared);
+  $("main").innerHTML = `<div class="panel"><h2>Open Job B</h2><p class="muted">One card per WS. Pro-forma can open it. Client name on certs only after paid.</p>
+    <label>Customer <input id="customer"></label>
+    <label>Unit <select id="unit">${rows.map((u) => `<option value="${u.id}">${u.ws}</option>`).join("")}</select></label>
+    <button class="btn" id="open">Open Job B</button></div>`;
+  $("open").onclick = async () => { const job = await api("/api/jobs", { method: "POST", body: JSON.stringify({ unit_id: $("unit").value, customer: $("customer").value }) }); alert("Job " + job.kind + " open"); };
 }
 async function book() {
   const rows = await api("/api/units");
-  $("main").innerHTML = `<div class="panel"><h2>Book work</h2><p class="muted">No asking price on this desk.</p>
+  $("main").innerHTML = `<div class="panel"><h2>Job cards</h2><p class="muted">No asking price on this desk. Stamp the work. You cannot delete the line.</p>
     <label>Unit <select id="bws">${rows.map((u) => `<option value="${u.id}">${u.ws} · ${u.description}</option>`).join("")}</select></label>
     <label>In your words <input id="words" placeholder="need 2 stopper blocks"></label>
     <label>Item <input id="item"></label><label>Qty <input id="qty" type="number" value="1"></label>
     <button class="btn" id="draft" type="button">Draft booking</button>
-    <button class="btn" id="stamp">Stamp</button></div><div id="file"></div>`;
+    <button class="btn" id="stamp">Stamp on job card</button></div><div id="file"></div>`;
   $("draft").onclick = async () => { const out = await api("/api/draft/booking", { method: "POST", body: JSON.stringify({ words: $("words").value }) }); $("item").value = out.item; $("qty").value = out.qty; };
-  $("stamp").onclick = async () => { await api("/api/bookings", { method: "POST", body: JSON.stringify({ unit_id: $("bws").value, item: $("item").value, qty: Number($("qty").value) }) }); file($("bws").value, "Job A"); };
+  $("stamp").onclick = async () => { await api("/api/bookings", { method: "POST", body: JSON.stringify({ unit_id: $("bws").value, item: $("item").value, qty: Number($("qty").value) }) }); file($("bws").value, "Job card"); };
+  $("bws").onchange = () => file($("bws").value, "Job card");
+  if (rows[0]) file(rows[0].id, "Job card");
 }
 async function queue() {
   const rows = await api("/api/queue");

@@ -10,9 +10,9 @@ const JOB_A = ["Valet","Lights","Roadworthy","Spray","PDI"];
 const PRICE = new Set(["director","accounts","stock","sales"]);
 const COST = new Set(["director","accounts"]);
 function load() {
-  if (!fs.existsSync(DB_PATH)) return { users:[], sessions:[], units:[], quotes:[], bookings:[], orders:[], costs:[], tasks:[], logs:[] };
+  if (!fs.existsSync(DB_PATH)) return { users:[], sessions:[], units:[], quotes:[], bookings:[], orders:[], costs:[], tasks:[], logs:[], jobs:[] };
   const db = JSON.parse(fs.readFileSync(DB_PATH, "utf8"));
-  db.costs = db.costs || []; db.tasks = db.tasks || []; db.logs = db.logs || [];
+  ["costs","tasks","logs","jobs","orders","bookings","quotes"].forEach((k) => { db[k] = db[k] || []; });
   return db;
 }
 function save(db) { fs.writeFileSync(DB_PATH, JSON.stringify(db)); }
@@ -26,13 +26,13 @@ function openUnit(fields, cleared) {
   db.units.push(unit);
   JOB_A.forEach((name) => db.tasks.push({ id: nid(db.tasks), unit_id: unit.id, job: "A", name, done: 0 }));
   COST_LINES.forEach((name) => db.costs.push({ id: nid(db.costs), unit_id: unit.id, name, supplier: "", qty: 0, unit_price: 0, inv: "" }));
+  db.jobs.push({ id: nid(db.jobs), unit_id: unit.id, kind: "A", title: "Showroom prep", opened_by: "System", opened_at: now(), status: "Open" });
   return unit;
 }
 if (!db.users.length) {
   [["Sebastian van Biljon","BVB","director"],["Siegfried van Biljon","SVB","director"],["Cindy","","accounts"],["Chantelle","","stock"],["Fanie van Biljon","FVB","sales"],["Stanley Johnson","SJ","sales"],["Drickus van Biljon","DVB","sales"],["Jean","","workshop"],["Louis","","workshop"],["Damian","","marketing"],["Andre","","admin"]].forEach(([name, code, role]) => db.users.push({ id: nid(db.users), name, code, role }));
   openUnit({ ws:"WS9001", kind:"WS", year:2023, make:"GRW", model:"TRI-AXLE", description:"50000Lt aluminium fuel tanker", vin:"TESTVIN9001", price_excl:1250000, tag:"TANKER", sentence:"1 x Used 2023 GRW 50000Lt aluminium tri-axle fuel tanker", seller:"Test seller" }, 1);
   openUnit({ ws:"WS9002", kind:"WS", year:2022, make:"MERCEDES", model:"2652 ACTROS", description:"6x4 truck tractor", vin:"TESTVIN9002", price_excl:1480000, tag:"TRUCK TRACTOR", sentence:"1 x Used 2022 Mercedes 2652 Actros 6x4 truck tractor", seller:"Test seller" }, 1);
-  openUnit({ ws:"WS9003", kind:"WS", year:2021, make:"SA TRUCK BODIES", model:"6X12", description:"Superlink tautliner", vin:"TESTVIN9003", price_excl:890000, tag:"TRAILER", sentence:"1 x Used 2021 SA Truck Bodies 6x12 superlink tautliner", seller:"Test seller" }, 0);
   save(db);
 }
 function hide(user, unit) {
@@ -50,6 +50,13 @@ function actor(req) {
 function send(res, code, body) { res.writeHead(code, { "Content-Type": "application/json" }); res.end(JSON.stringify(body)); }
 function bodyOf(req) { return new Promise((resolve) => { let raw = ""; req.on("data", (c) => raw += c); req.on("end", () => { try { resolve(raw ? JSON.parse(raw) : {}); } catch (e) { resolve({}); } }); }); }
 function nextWs(kind) { let max = 9004; db.units.forEach((u) => { const n = Number(String(u.ws).replace(/\D/g, "")); if (n > max && n < 10000) max = n; }); return (kind || "WS") + (max + 1); }
+function pack(user, unit) {
+  let orders = db.orders.filter((o) => o.unit_id === unit.id);
+  let costs = db.costs.filter((c) => c.unit_id === unit.id);
+  if (!COST.has(user.role) && user.role !== "stock") orders = orders.map((o) => Object.assign({}, o, { invoiced_excl: null }));
+  if (!COST.has(user.role)) costs = [];
+  return { unit: hide(user, unit), quotes: db.quotes.filter((q) => q.unit_id === unit.id), bookings: db.bookings.filter((b) => b.unit_id === unit.id), orders, costs, tasks: db.tasks.filter((t) => t.unit_id === unit.id), logs: db.logs.filter((l) => l.unit_id === unit.id), jobs: db.jobs.filter((j) => j.unit_id === unit.id) };
+}
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, "http://localhost");
   if (url.pathname.startsWith("/api/")) {
@@ -82,11 +89,7 @@ const server = http.createServer(async (req, res) => {
     if (one && req.method === "GET") {
       const unit = db.units.find((u) => u.id === Number(one[1]));
       if (!unit) return send(res, 404, { error: "No unit" });
-      let orders = db.orders.filter((o) => o.unit_id === unit.id);
-      let costs = db.costs.filter((c) => c.unit_id === unit.id);
-      if (!COST.has(user.role) && user.role !== "stock") orders = orders.map((o) => Object.assign({}, o, { invoiced_excl: null }));
-      if (!COST.has(user.role)) costs = [];
-      return send(res, 200, { unit: hide(user, unit), quotes: db.quotes.filter((q) => q.unit_id === unit.id), bookings: db.bookings.filter((b) => b.unit_id === unit.id), orders, costs, tasks: db.tasks.filter((t) => t.unit_id === unit.id), logs: db.logs.filter((l) => l.unit_id === unit.id) });
+      return send(res, 200, pack(user, unit));
     }
     if (url.pathname === "/api/quotes" && req.method === "POST") {
       if (!["sales","director"].includes(user.role)) return send(res, 403, { error: "Sales quote" });
@@ -94,8 +97,8 @@ const server = http.createServer(async (req, res) => {
       if (!unit || !unit.cleared) return send(res, 400, { error: "Unit must be cleared" });
       if (!body.customer) return send(res, 400, { error: "Customer required" });
       const trade = Number(body.trade_in || 0), excl = Number(unit.price_excl) + 2500 - trade;
-      const quote = { id: nid(db.quotes), number: "C" + (9001 + db.quotes.length), unit_id: unit.id, salesman_id: user.id, customer: body.customer, trade_in: trade, excl, vat: excl * 0.15, total: excl * 1.15, follow_day: 1, due_on: addDays(1), result: "", code: user.code, name: user.name, ws: unit.ws, item: unit.ws + " " + unit.year + " " + unit.make + " " + unit.description, created_at: now() };
-      db.quotes.push(quote); unit.step = "Quote"; save(db); return send(res, 200, quote);
+      const quote = { id: nid(db.quotes), number: "C" + (9001 + db.quotes.length), unit_id: unit.id, salesman_id: user.id, customer: body.customer, phone: body.phone || "", trade_in: trade, excl, vat: excl * 0.15, total: excl * 1.15, follow_day: 1, due_on: addDays(1), result: "", code: user.code, name: user.name, ws: unit.ws, item: unit.ws + " " + unit.year + " " + unit.make + " " + unit.description, sentence: unit.sentence, created_at: now() };
+      db.quotes.push(quote); unit.step = "Quoted"; save(db); return send(res, 200, quote);
     }
     const qlog = url.pathname.match(/^\/api\/quotes\/(\d+)\/log$/);
     if (qlog && req.method === "POST") {
@@ -105,6 +108,16 @@ const server = http.createServer(async (req, res) => {
       const next = q.follow_day === 1 ? 3 : q.follow_day === 3 ? 7 : 14;
       q.result = body.result || "Logged"; q.follow_day = next; q.due_on = addDays(next); save(db);
       return send(res, 200, { due_on: q.due_on, follow_day: next });
+    }
+    if (url.pathname === "/api/jobs" && req.method === "POST") {
+      if (!["sales","director","stock"].includes(user.role)) return send(res, 403, { error: "Sales opens Job B" });
+      const unit = db.units.find((u) => u.id === Number(body.unit_id));
+      if (!unit) return send(res, 404, { error: "No unit" });
+      if (db.jobs.find((j) => j.unit_id === unit.id && j.kind === "B")) return send(res, 400, { error: "Job B already open" });
+      const job = { id: nid(db.jobs), unit_id: unit.id, kind: "B", title: body.customer || "Sold unit", opened_by: user.name, opened_at: now(), status: "Open" };
+      db.jobs.push(job);
+      ["Fitment","Roadworthy","Delivery"].forEach((name) => db.tasks.push({ id: nid(db.tasks), unit_id: unit.id, job: "B", name, done: 0 }));
+      unit.step = "Job B"; save(db); return send(res, 200, job);
     }
     if (url.pathname === "/api/bookings" && req.method === "POST") {
       if (!["workshop","director"].includes(user.role)) return send(res, 403, { error: "Workshop books" });
